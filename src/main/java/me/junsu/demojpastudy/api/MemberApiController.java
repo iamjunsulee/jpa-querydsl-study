@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import me.junsu.demojpastudy.domain.Address;
 import me.junsu.demojpastudy.domain.Member;
+import me.junsu.demojpastudy.repository.member.query.MemberQueryRepository;
 import me.junsu.demojpastudy.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberApiController {
     private final MemberService memberService;
+    private final MemberQueryRepository memberQueryRepository;
 
     @PostMapping("/api/v1/members")
     public MemberResponse saveMemberVer1(@RequestBody Member member) {
@@ -46,14 +48,14 @@ public class MemberApiController {
 
     @GetMapping("/api/v2/members")
     public Result<List<MemberDto>> getMembersV2(@RequestParam(required = false) String name) {
-        List<Member> memberList = new ArrayList<>();
-        if (name == null || name.trim().isEmpty()) {
-            memberList = memberService.findAll();
-        }
-        else {
-            memberList = memberService.findByName(name);
-        }
-
+//        List<Member> memberList = new ArrayList<>();
+//        if (name == null || name.trim().isEmpty()) {
+//            memberList = memberService.findAll();
+//        }
+//        else {
+//            memberList = memberService.findByName(name);
+//        }
+        List<Member> memberList = memberQueryRepository.findMembersByName(name);
         List<MemberDto> result = memberList.stream()
                 .map(m -> new MemberDto(m.getId(), m.getName(), m.getAddress())).collect(Collectors.toList());
         return new Result<>(result.size(), result);
