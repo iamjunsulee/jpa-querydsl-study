@@ -48,13 +48,6 @@ public class MemberApiController {
 
     @GetMapping("/api/v2/members")
     public Result<List<MemberDto>> getMembersV2(@RequestParam(required = false) String name) {
-//        List<Member> memberList = new ArrayList<>();
-//        if (name == null || name.trim().isEmpty()) {
-//            memberList = memberService.findAll();
-//        }
-//        else {
-//            memberList = memberService.findByName(name);
-//        }
         List<Member> memberList = memberQueryRepository.findMembersByName(name);
         List<MemberDto> result = memberList.stream()
                 .map(m -> new MemberDto(m.getId(), m.getName(), m.getAddress())).collect(Collectors.toList());
@@ -64,16 +57,8 @@ public class MemberApiController {
 
     @GetMapping("/api/members")
     public PageResult<List<MemberDto>> getAllMembers(@RequestParam(required = false) String name, @RequestParam(defaultValue = "0") int page) {
-        Page<Member> memberPage;
         Pageable paging = PageRequest.of(page, 5);
-
-        if (name == null || name.trim().isEmpty()) {
-            memberPage = memberService.getMemberListWithPage(paging);
-        }
-        else {
-            memberPage = memberService.getMemberByNameWithPage(name, paging);
-        }
-
+        Page<Member> memberPage = memberQueryRepository.findMembersByName(name, paging);
         List<Member> memberList = memberPage.getContent();
         List<MemberDto> memberDto = memberList.stream()
                 .map(m -> new MemberDto(m.getId(), m.getName(), m.getAddress())).collect(Collectors.toList());
