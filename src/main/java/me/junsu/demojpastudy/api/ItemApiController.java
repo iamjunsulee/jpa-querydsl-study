@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import me.junsu.demojpastudy.domain.Book;
 import me.junsu.demojpastudy.domain.Item;
+import me.junsu.demojpastudy.repository.item.query.ItemQueryRepository;
 import me.junsu.demojpastudy.service.ItemService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemApiController {
     private final ItemService itemService;
+    private final ItemQueryRepository itemQueryRepository;
 
     @PostMapping("/api/addBook")
     public ItemResponse registerItem(@RequestBody ItemRequest itemRequest) {
@@ -38,7 +40,7 @@ public class ItemApiController {
     @GetMapping("/api/items")
     public PageResult<List<ItemDto>> getAllItemsWithPage(@RequestParam(defaultValue = "0") int page) {
         Pageable pageable = PageRequest.of(page, 2);
-        Page<Item> itemsWithPage = itemService.getAllItemsWithPage(pageable);
+        Page<Item>  itemsWithPage= itemQueryRepository.findItems(pageable);
         List<Item> items = itemsWithPage.getContent();
         List<ItemDto> itemDtoList = items.stream()
                 .map(item -> new ItemDto(item.getId(), item.getName(), item.getPrice(), item.getStockQuantity()))
