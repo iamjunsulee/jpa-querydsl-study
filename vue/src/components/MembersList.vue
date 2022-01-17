@@ -25,7 +25,7 @@
         </v-data-table>
       </v-card>
     </v-col>
-
+<!--
     <v-col cols="12" sm="12">
       <v-pagination
         v-model="page"
@@ -36,6 +36,10 @@
         @input="pageChange"
         ></v-pagination>
     </v-col>
+    -->
+    <v-btn small color="primary" @click="noOffSetFindMembers">
+      더보기
+    </v-btn>
   </v-row>
 </template>
 
@@ -57,7 +61,8 @@ export default {
       ],
       loading: false,
       page: 1,
-      totalPages: 0
+      totalPages: 0,
+      lastMember: {}
     };
   },
   methods: {
@@ -88,6 +93,35 @@ export default {
       }
       return params;
     },
+    getRequestParams2(searchName, lastId) {
+      let params = {};
+
+      if (searchName) {
+        params["name"] = searchName;
+      }
+
+      if (lastId) {
+        params["lastId"] = lastId;
+      }
+      return params;
+    },
+    noOffSetFindMembers() {
+      if(this.loading) return;
+      this.loading = true;
+      const params = this.getRequestParams2(this.searchName, this.lastMember.id);
+
+      MemberDataService.noOffSetFindMembers(params)
+          .then(response => {
+            this.members = response.data.members;
+            this.lastMember = response.data.members[this.members.length - 1];
+            this.loading = false;
+            console.log(response.data);
+          })
+          .catch(e => {
+            this.loading = false;
+            console.log(e);
+          })
+    },
     findAllMembers() {
       if(this.loading) return;
       this.loading = true;
@@ -97,6 +131,7 @@ export default {
       .then(response => {
         const { members, totalPages } = response.data;
         this.members = members;
+        this.lastMember = this.members[this.members.length-1];
         this.totalPages = totalPages;
         this.loading = false;
         console.log(response.data);
@@ -113,7 +148,8 @@ export default {
   },
   mounted() {
     //this.retrieveMembers();
-    this.findAllMembers();
+    //this.findAllMembers();
+    this.noOffSetFindMembers();
   }
 };
 </script>

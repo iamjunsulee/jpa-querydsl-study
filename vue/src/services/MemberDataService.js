@@ -19,5 +19,8 @@ class MemberDataService {
     findMembersWithPage(params) {
         return http.get("/api/members", { params });
     }
+    noOffSetFindMembers(params) {
+        return http.get("/api/noOffSetMembers", { params });
+    }
 }
 export default new MemberDataService();

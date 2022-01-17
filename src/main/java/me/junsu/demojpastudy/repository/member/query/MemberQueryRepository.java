@@ -38,10 +38,23 @@ public class MemberQueryRepository {
         return new PageImpl<>(content, pageable, queryResults.getTotal());
     }
 
+    public List<Member> noOffSet(Long id, String name, int limit) {
+        return jpaQueryFactory
+                .selectFrom(member)
+                .where(eqName(name), memberIdLt(id))
+                .orderBy(member.id.desc())
+                .limit(limit)
+                .fetch();
+    }
+
     private BooleanExpression eqName(String name) {
         if  (Objects.isNull(name)) {
             return null;
         }
         return member.name.eq(name);
+    }
+
+    private BooleanExpression memberIdLt(Long id) {
+        return id != null ? member.id.lt(id) : null;
     }
 }

@@ -65,6 +65,14 @@ public class MemberApiController {
 
         return new PageResult<>(memberDto, memberPage.getNumber(), memberPage.getTotalPages(), memberPage.getTotalElements());
     }
+
+    @GetMapping("/api/noOffSetMembers")
+    public Result<List<MemberDto>> getAllMembers(@RequestParam(required = false) String name, @RequestParam(required = false) Long lastId) {
+        List<Member> memberList = memberQueryRepository.noOffSet(lastId, name, 5);
+        List<MemberDto> result = memberList.stream()
+                .map(m -> new MemberDto(m.getId(), m.getName(), m.getAddress())).collect(Collectors.toList());
+        return new Result<>(result.size(), result);
+    }
 //    @GetMapping("/api/members/{name}")
 //    public Result<List<MemberDto>> getMemberByName(@PathVariable String name) {
 //        List<Member> memberList = memberService.findByName(name);
@@ -94,7 +102,7 @@ public class MemberApiController {
     @AllArgsConstructor
     static class Result<T> {
         private int count;
-        private T data;
+        private T members;
     }
 
     @Data
