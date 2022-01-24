@@ -11,6 +11,8 @@ import static me.junsu.demojpastudy.domain.QItem.item;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,7 +20,14 @@ public class OrderQuerydslRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public List<OrderQueryDto> findOrders() {
-        return jpaQueryFactory
+        List<Long> ids = jpaQueryFactory
+                .select(order.id)
+                .from(order)
+                .innerJoin(order.member, member)
+                .innerJoin(order.delivery, delivery)
+                .fetch();
+
+        List<OrderQueryDto> orders = jpaQueryFactory
                 .select(Projections.fields(OrderQueryDto.class,
                         order.id.as("orderId")
                         , member.name
@@ -29,7 +38,13 @@ public class OrderQuerydslRepository {
                 .from(order)
                 .innerJoin(order.member, member)
                 .innerJoin(order.delivery, delivery)
+                .where(order.id.in(ids))
                 .fetch();
+
+        List<OrderItemQueryDto> orderItems = this.findOrderItems(ids);
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItems.stream().collect(Collectors.groupingBy(OrderItemQueryDto::getOrderId));
+        orders.forEach(order -> order.setOrderItems(orderItemMap.get(order.getOrderId())));
+        return orders;
     }
 
     public List<OrderItemQueryDto> findOrderItems(List<Long> ids) {
