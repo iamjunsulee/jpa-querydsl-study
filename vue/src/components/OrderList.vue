@@ -38,7 +38,7 @@ export default {
         { text: "배송주소1", value: "address.city", sortable: false },
         { text: "배송주소2", value: "address.street", sortable: false },
         { text: "우편번호", align: "center", value: "address.zipcode", sortable: false },
-        { text: "상품명", value: "orderItems[0].itemName", sortable: false },
+        { text: "대표상품명", value: "orderItems[0].itemName", sortable: false },
         { text: "주문수량", align: "center", value: "orderItems[0].orderQuantity", sortable: false },
         { text: "주문일자", value: "orderDate", sortable: false },
         { text: "주문상태", align: "center", value: "orderStatus", sortable: false },
@@ -53,8 +53,8 @@ export default {
       this.loading = true;
       OrderDataService.getAllOrders()
       .then(response => {
-        this.orders = response.data;
-        console.log(response.data);
+        this.orders = response.data.orders;
+        console.log(response.data.orders);
         this.loading = false;
       })
       .catch(e => {

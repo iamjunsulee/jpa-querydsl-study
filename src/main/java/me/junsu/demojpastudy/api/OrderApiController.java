@@ -10,6 +10,7 @@ import me.junsu.demojpastudy.domain.OrderItem;
 import me.junsu.demojpastudy.domain.OrderStatus;
 import me.junsu.demojpastudy.repository.SimpleOrderDto;
 import me.junsu.demojpastudy.repository.order.query.OrderQueryDto;
+import me.junsu.demojpastudy.repository.order.query.OrderQuerydslRepository;
 import me.junsu.demojpastudy.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderApiController {
     private final OrderService orderService;
+    private final OrderQuerydslRepository orderQuerydslRepository;
 
     @GetMapping("/api/v1/simple-orders")
     public List<Order> getOrders() {
@@ -104,9 +106,22 @@ public class OrderApiController {
         return new CreateOrderResponse(saveOrderId);
     }
 
+    @GetMapping("/api/orders")
+    public Result<List<OrderQueryDto>> getQuerydslOrders() {
+        List<OrderQueryDto> orders = orderQuerydslRepository.findOrders();
+        return new Result<>(orders.size(), orders);
+    }
+
     @PostMapping("/api/orders/{id}")
     public void cancelOrder(@PathVariable Long id) {
         orderService.cancelOrder(id);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int count;
+        private T orders;
     }
 
     @Data

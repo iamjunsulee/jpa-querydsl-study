@@ -5,7 +5,7 @@ class OrderDataService {
         return http.post("/api/orders", data);
     }
     getAllOrders() {
-        return http.get("/api/v3_1/orders");
+        return http.get("/api/orders");
     }
     cancelOrder(id) {
         return http.post(`/api/orders/${id}`)
