@@ -42,15 +42,15 @@ export default {
   data() {
     return {
       currentMember: null,
-      message: "",
+      message: ""
     };
   },
   methods: {
     findMember(id) {
       MemberDataService.findById(id)
       .then(response => {
-        this.currentMember = response.data.data;
-        console.log(response.data.data);
+        this.currentMember = response.data.members;
+        console.log(response.data.members);
       })
       .catch(e => {
         console.log(e);
