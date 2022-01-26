@@ -9,6 +9,7 @@ import me.junsu.demojpastudy.domain.Order;
 import me.junsu.demojpastudy.domain.OrderItem;
 import me.junsu.demojpastudy.domain.OrderStatus;
 import me.junsu.demojpastudy.repository.SimpleOrderDto;
+import me.junsu.demojpastudy.repository.order.query.OrderItemQueryDto;
 import me.junsu.demojpastudy.repository.order.query.OrderQueryDto;
 import me.junsu.demojpastudy.repository.order.query.OrderQuerydslRepository;
 import me.junsu.demojpastudy.service.OrderService;
@@ -117,11 +118,17 @@ public class OrderApiController {
         orderService.cancelOrder(id);
     }
 
+    @GetMapping("/api/orders/{id}/orderItems")
+    public Result<List<OrderItemQueryDto>> getQuerydslOrderItems(@PathVariable Long id) {
+        List<OrderItemQueryDto> orderItems = orderQuerydslRepository.findOrderItems(id);
+        return new Result<>(orderItems.size(), orderItems);
+    }
+
     @Data
     @AllArgsConstructor
     static class Result<T> {
         private int count;
-        private T orders;
+        private T data;
     }
 
     @Data

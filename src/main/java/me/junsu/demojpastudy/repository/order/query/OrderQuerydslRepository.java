@@ -54,4 +54,19 @@ public class OrderQuerydslRepository {
                 .where(orderItem.order.id.in(ids))
                 .fetch();
     }
+
+    public List<OrderItemQueryDto> findOrderItems(Long id) {
+        return jpaQueryFactory
+                .select(Projections.fields(OrderItemQueryDto.class,
+                        order.id.as("orderId")
+                        , item.name.as("itemName")
+                        , orderItem.orderQuantity
+                        , orderItem.orderPrice
+                ))
+                .from(orderItem)
+                .innerJoin(orderItem.item, item)
+                .innerJoin(orderItem.order, order)
+                .where(orderItem.order.id.eq(id))
+                .fetch();
+    }
 }

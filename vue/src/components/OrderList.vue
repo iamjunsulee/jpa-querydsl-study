@@ -18,6 +18,7 @@
             </v-chip>
           </template>
           <template v-slot:item.cancel="{ item }">
+            <v-icon small class="mx-2" @click="getOrderItems(item.orderId)">mdi-vector-arrange-below</v-icon>
             <v-icon v-if="item.orderStatus === 'ORDERED'" color="red" small @click="cancelOrder(item.orderId)">mdi-close-outline</v-icon>
           </template>
         </v-data-table>
@@ -53,8 +54,8 @@ export default {
       this.loading = true;
       OrderDataService.getAllOrders()
       .then(response => {
-        this.orders = response.data.orders;
-        console.log(response.data.orders);
+        this.orders = response.data.data;
+        console.log(response.data.data);
         this.loading = false;
       })
       .catch(e => {
@@ -77,6 +78,9 @@ export default {
     getColor(orderStatus) {
       if (orderStatus === 'CANCELED') return 'red';
       else return 'blue';
+    },
+    getOrderItems(id) {
+      this.$router.push({ name: "orderItems", params: { orderId: id } });
     }
   },
   mounted() {
