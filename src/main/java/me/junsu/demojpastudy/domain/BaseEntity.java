@@ -1,5 +1,7 @@
 package me.junsu.demojpastudy.domain;
 
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
@@ -7,4 +9,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseEntity {
     public LocalDateTime createDate;
+
+    @LastModifiedDate
+    public LocalDateTime updateDate;
 }
