@@ -25,8 +25,6 @@ public class Member extends BaseEntity{
     public Member(String name, Address address) {
         this.name = name;
         this.address = address;
-        this.createDate = LocalDateTime.now();
-        this.updateDate = LocalDateTime.now();
     }
 
     //연관관계의 주인이 아님을 명시
